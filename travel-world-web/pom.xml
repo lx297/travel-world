@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>travel-world</groupId>
 		<artifactId>travel-world</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>travel-world-web</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<name>travel-world-web</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -25,14 +24,19 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.11.3</version>
+		</dependency>
+		<dependency>
+			<groupId>travel-world-api</groupId>
+			<artifactId>travel-world-api</artifactId>
+			<version>${parent.version}</version>
 		</dependency>
 	</dependencies>
 

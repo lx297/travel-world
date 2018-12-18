@@ -6,11 +6,11 @@
 		<version>1.5.10.RELEASE</version>
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
 
+	<modelVersion>4.0.0</modelVersion>
 	<groupId>travel-world</groupId>
 	<artifactId>travel-world</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>travel-world</name>
@@ -33,5 +33,6 @@
 	</build>
 	<modules>
 		<module>travel-world-web</module>
+		<module>travel-world-api</module>
 	</modules>
 </project>
