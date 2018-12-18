@@ -1,0 +1,61 @@
+
+#指定启动端口
+server: 
+  port: 9090
+  context-path: /
+#指定log配置
+#logging:
+#  config: classpath:log4j2.xml
+
+eureka:
+  instance:
+    hostname: 192.168.171.16
+    prefer-ip-address: false
+    ip-address: 192.168.171.16
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl: 
+      defaultZone: http://${eureka.instance.hostname}:9006/eureka/
+
+endpoints:
+  health:
+    sensitive: false  #actuator的health接口是否需要安全保证
+#######启动时，需要扫描的包名，多个以逗号分开#######
+app: 
+  scan: 
+    packages: cn.qtb
+    excludeName: #########启动时，需要过滤的class(要加包名)，多个以逗号分开##########
+
+
+
+
+
+#==============####jdbc配置==============####
+spring:
+  application:
+    name: mng-web # 注册到eureka上的服务名称
+  datasource: 
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    dialect: cn.sunline.edsp.tsp.plugins.mybatis.dialect.MySQLDialect
+    url: jdbc:mysql://192.168.171.13:3306/insd_std?useUnicode\=true&characterEncoding\=utf-8
+    username: insd_std
+    password: insd_qtb_std
+    showSql: false
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 'x'
+    testWhileIdle: false
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  jpa:
+    show-sql: true
