@@ -16,8 +16,9 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.travel.world.request.ArticleDescReq;
-import cn.travel.world.response.ArticleDescResp;
+import cn.travel.world.request.QueryDetailsReq;
+import cn.travel.world.request.QueryListReq;
+import cn.travel.world.response.DescListResp;
 import cn.travel.world.service.WebDataService;
 import cn.travel.world.util.KK;
 
@@ -28,10 +29,10 @@ public class MaFengWoWebDataServiceImpl implements WebDataService {
 	private static final String ART_DETAILS_URL_NEXT = "https://m.mafengwo.cn/note/note/contentChunk?id=%s&iid=%s&back=0";
 
 	@Override
-	public List<ArticleDescResp> getDataList(ArticleDescReq search) {
-		Document doc = null;
+	public List<Object> getDataList(QueryListReq  req) {
+ 		Document doc = null;
 		try {
-			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, search.getPage(), search.getLimit(), search.getKey())), 5000);
+			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, req.getPage(), PAGE_LIMIT, req.getKey())), 5000);
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -39,24 +40,25 @@ public class MaFengWoWebDataServiceImpl implements WebDataService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		List<ArticleDescResp> respList = new ArrayList<>();
+		List<Object> respList = new ArrayList<>();
 		Elements select = doc.select("section.articles > article.article > a");
 		for (Element e : select) {
-			ArticleDescResp descResp = new ArticleDescResp();
+			DescListResp descResp = new DescListResp();
+			descResp.setId(e.attr("href").replaceAll("/i/(\\d+).html", "$1"));
 			descResp.setTitle(e.select("dl > dd > h2").text());
 			descResp.setPic(e.select("dl > dt > img[src]").attr("src"));
-			descResp.setReply(e.select("dl > dd > div.post-info >span.reply").text());
-			descResp.setView(e.select("dl > dd > div.post-info >span.view").text());
-			descResp.setAuthorPic(e.select("dl > dd > div.author >img[src]").attr("src"));
+			descResp.setReply(e.select("dl > dd > div.post-info > div > span.reply").text());
+			descResp.setView(e.select("dl > dd > div.post-info > div > span.view").text());
+			descResp.setAuthorPic(e.select("dl > dd > div.post-info > div.author >img[src]").attr("src"));
 			respList.add(descResp);
 		}
 		return respList;
 	}
 
 	@Override
-	public String getDataDetail(String urlId) {
+	public String getDataDetail(QueryDetailsReq req) {
 		try {
-			Document doc = Jsoup.parse(new URL(String.format(ART_DETAILS_URL, urlId)), 5000);
+			Document doc = Jsoup.parse(new URL(String.format(ART_DETAILS_URL, req.getId())), 5000);
 			Matcher m = Pattern.compile("\"new_iid\":\"(\\d*)\"").matcher(doc.toString());
 			String newId = "0";
 			while (m.find()) {
@@ -65,10 +67,11 @@ public class MaFengWoWebDataServiceImpl implements WebDataService {
 			// "new_iid":"305418636"
 			Elements mainDiv = doc.select("div.vi_con");
 			mainDiv.addAll(doc.select("div._j_content_box"));
-			String json = KK.http.get(String.format(ART_DETAILS_URL_NEXT, newId, urlId));
+			String json = KK.http.sendGet(String.format(ART_DETAILS_URL_NEXT, newId, req.getId()));
 			JSONObject data = JSONObject.parseObject(json).getJSONObject("data");
 			mainDiv.append(data.getString("html"));
-			mainDiv.select("a[href]").attr("href", "#");
+			mainDiv.select("a[href]").attr("href", "javascript:void(0);");
+			mainDiv.select("img._j_lazyload._j_needInitShare").attr("style","width:50%");
 			Elements ss = mainDiv.select("img[src^=data:]");
 			for (Element element : ss) {
 				element.attr("src",element.attr("data-src"));
@@ -83,12 +86,6 @@ public class MaFengWoWebDataServiceImpl implements WebDataService {
 			e1.printStackTrace();
 		}
 		return null;
-	}
-
-	public static void main(String[] args) {
-//		String a=" <a href=\"/travel-scenic-spot/mafengwo/10132.html\" class=\"link _j_keyword_mdd\" data-kw=\"厦门\" target=\"_self\">厦门</a>";
-//		System.out.println(a.replaceAll("href=\\\".+?\\\"", "href=\"#\""));
-		new MaFengWoWebDataServiceImpl().getDataDetail("8796846");
 	}
 
 }

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.travel.world.request.ArticleDescReq;
-import cn.travel.world.response.ArticleDescResp;
+import cn.travel.world.request.QueryDetailsReq;
+import cn.travel.world.request.QueryListReq;
 import cn.travel.world.service.WebDataService;
 
 @Controller
@@ -26,11 +26,15 @@ public class WebController {
 	private WebDataService webDataService;
 	
 	@RequestMapping(value = "artList")
-	public String artList(@RequestBody String json) {
-		logger.info("artList requesst:{}",json );
-		JSONObject jsonReq= JSONObject.parseObject(json);
-		List<ArticleDescResp> dataList = webDataService.getDataList(JSONObject.toJavaObject(jsonReq, ArticleDescReq.class));
-		return JSONObject.toJSONString(dataList);
+	public Object artList(@RequestBody QueryListReq req) {
+		logger.info("artList requesst:{}",JSONObject.toJSONString(req) );
+		List<Object> dataList = webDataService.getDataList(req);
+		return dataList;
+	}
+	@RequestMapping(value = "getDataDetail")
+	public Object getDataDetail(@RequestBody QueryDetailsReq req) {
+		logger.info("artList requesst:{}",JSONObject.toJSONString(req) );
+		return  webDataService.getDataDetail(req);
 	}
 
 }

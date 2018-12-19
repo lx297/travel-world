@@ -73,29 +73,11 @@ Q.emptyToStr = function(data) {
 	return data == null || data == undefined ? "" : data;
 }
 
-/**
- * 取返回值
- */
-Q.getData = function(data) {
-	if (data == null || data == undefined) {
-		return null;
-	}
-	if("SYS_W_001"==data){
-		alert("授权信息失效，请重新登陆");
-		window.location.href="/pages/sign-in.html";
-		return;
-	}
-	if (data.code != "SYS_S_000") {
-		alert(data.desc);
-		return;
-	}
-	return data.output;
-}
 
 /**
  * 获取地址栏参数
  */
-Q.getParam = function GetQueryString(name)
+Q.GetQueryString = function(name)
 {
      var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
      var r = window.location.search.substr(1).match(reg);

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>游记列表 - 世界那么大</title>
-<meta name="viewport"
-	content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui,viewport-fit=cover">
 <meta name="format-detection" content="telephone=no,address=no">
 <meta name="referrer" content="always">
 <meta name="apple-mobile-web-app-capable" content="no">
 <meta name="apple-mobile-web-app-status-bar-style" content="no">
+<meta name="viewport"
+	content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui,viewport-fit=cover">
 <link
 	href="https://css.mafengwo.net/mobile/css/note/notes-list.css?1526627473"
 	rel="stylesheet" type="text/css" />
@@ -24,53 +24,57 @@
 
 </head>
 <body style="font-size: 24px;">
-	<div id="pos38"></div>
 	<header class="head2home">
 
 		<div class="rBtn">
-			<a href="/" class="home">官网首页</a> <a href="/search.php" class="sch"></a>
+			<input type="text" id="search" class="inp-search" /><a href="javascript:clickSearch(1);" class="sch"></a>
 		</div>
 	</header>
-
-
-
-
-
-	<div class="notes-list">
-		<a class="notes-item sem_open_app"
-			data-url="https://m.mafengwo.cn/i/11393886.html"
-			href="https://ulink.mafengwo.cn/page.php?page=https%3A%2F%2Fm.mafengwo.cn%2Fi%2F11393886.html&amp;download_url=https://imfw.cn/l/9911942"
-			onclick="window.omc.Statistics.log('click',{channel:'travel_note',sub_channel:'index',type:'SEM-专区-NOTE',pos_id:'438',ad_id:'411',download_url:'https://imfw.cn/l/9911942'})">
-			<div class="l-text">
-				<h3 class="title">#我的2018#年终游记征集活动正式启动！</h3>
-				<div class="user">
-					<img
-						src="https://b4-q.mafengwo.net/s10/M00/73/96/wKgBZ1kSsyKAa_91AACgQYkA64o659.png?imageMogr2%2Fthumbnail%2F%2148x48r%2Fgravity%2FCenter%2Fcrop%2F%2148x48%2Fquality%2F90">游记总..<span
-						class="ml8">在<span class="highlight">中国</span></span>
-				</div>
-				<div class="nums">
-					<span class="n-view"><i></i>3249</span><span class="n-reply"><i></i>89</span><span
-						style="float: right; margin-top: -3px; font-size: 12px; color: #7a7a7a; padding: 2px 2px; border: 1px solid #d4d4d4; border-radius: 2px; line-height: 13px;">APP查看</span>
-				</div>
-			</div>
-			<div class="r-pic">
-				<img
-					src="https://b1-q.mafengwo.net/s12/M00/B3/55/wKgED1wTEFaAI2NnAAEVFqFl9TQ188.png?imageMogr2%2Fthumbnail%2F%21390x260r%2Fstrip%2Fgravity%2FCenter%2Fcrop%2F%21390x260%2Fquality%2F90">
-			</div>
-		</a>
-	</div>
+	<div class="notes-list"></div>
 	<script type="text/javascript">
-		 Q.post({
-			url:"/web/artList",
-			data:{
-				key:"北京",
-				page:1,
-				limit:8
-			},
-			success:function(data){
-				console.log(data);
-			}
-		});
+		clickSearch(1);
+		function clickSearch(p) {
+			var k=$("#search").val();
+			k = k == null || k == undefined || k == "" ? "新" : k;
+			Q.post({
+						url : "/web/artList",
+						data : {
+							key : k,
+							page : p,
+							limit : 8
+						},
+						success : function(data) {
+							if (data) {
+								var html = "";
+								for ( var i in data) {
+									var obj = data[i];
+									html += '<a class="notes-item sem_open_app" href="javascript:clickDetail('
+											+ obj.id + ');" >';
+									html += '<div class="l-text">';
+									html += '<h3 class="title">' + obj.title
+											+ '</h3>';
+									//					html+='<div class="user">';
+									//					html+='<img src="https://b4-q.m90">游记总..<span class="ml8">在<span class="highlight">中国</span></span>';
+									//					html+='</div>';
+									//					html+='<div class="nums">';
+									//					html+='<span class="n-view"><i></i>3249</span><span class="n-reply"><i></i>89</span>';
+									//					html+='</div>';
+									html += '</div>';
+									html += '<div class="r-pic">';
+									html += '<img height="140px" src="'+obj.pic+'">';
+									html += '</div>';
+									html += '</a>';
+								}
+								$(".notes-list").html(html);
+								html = null;
+							}
+						}
+					});
+		}
+
+		function clickDetail(id) {
+			window.location.href = "/details.html?id=" + id;
+		}
 	</script>
 </body>
 </html>

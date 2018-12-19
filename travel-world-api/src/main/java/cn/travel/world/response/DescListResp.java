@@ -1,6 +1,6 @@
 package cn.travel.world.response;
 
-public class ArticleDescResp {
+public class DescListResp {
 	private String title;
 	private String author;
 	private String id;

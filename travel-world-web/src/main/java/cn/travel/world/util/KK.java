@@ -1,109 +1,207 @@
 package cn.travel.world.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 public class KK {
 	private static Logger log = LoggerFactory.getLogger(KK.class);
 
 	public static class http {
-		public static String postJson(String json, String url) throws Exception {
 
-			HttpPost httppost = new HttpPost(url);
-			httppost.setHeader("Content-Type", "application/json;charset=UTF-8");
+		// 默认字符集
+		private static final String ENCODING = "UTF-8";
+
+		/**
+		 * @Title: sendPost @Description: TODO(发送post请求) @param url 请求地址 @param
+		 *         headers 请求头 @param data 请求实体 @param encoding 字符集 @author
+		 *         wangxy @return String @date 2018年5月10日 下午4:36:17 @throws
+		 */
+		public static String sendPost(String url, Map<String, String> headers, JSONObject data, String encoding) {
+			log.info("进入post请求方法...");
+			log.info("请求入参：URL= " + url);
+			log.info("请求入参：headers=" + JSON.toJSONString(headers));
+			log.info("请求入参：data=" + JSON.toJSONString(data));
+			// 请求返回结果
+			String resultJson = null;
+			// 创建Client
+			CloseableHttpClient client = HttpClients.createDefault();
+			// 创建HttpPost对象
+			HttpPost httpPost = new HttpPost();
+
 			try {
-				// 设置请求和传输超时时间
-				CloseableHttpClient httpclient = HttpClients.custom().build();
-				httppost.setEntity(new StringEntity(json, "UTF-8"));
-				CloseableHttpResponse response = httpclient.execute(httppost);
-				String result = null;
-				InputStreamReader reader = null;
-				try {
-					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						HttpEntity entity = response.getEntity();
-						result = EntityUtils.toString(entity);
-					} else {
-						throw new IOException("HTTP返回码[" + response.getStatusLine().getStatusCode() + "]，HTTP返回异常");
+				// 设置请求地址
+				httpPost.setURI(new URI(url));
+				// 设置请求头
+				if (headers != null) {
+					Header[] allHeader = new BasicHeader[headers.size()];
+					int i = 0;
+					for (Map.Entry<String, String> entry : headers.entrySet()) {
+						allHeader[i] = new BasicHeader(entry.getKey(), entry.getValue());
+						i++;
 					}
-				} finally {
-					response.close();
-					if (reader != null) {
-						reader.close();
-					}
+					httpPost.setHeaders(allHeader);
 				}
-				// 返回报文
-				return result;
-			} catch (ClientProtocolException e) {
-				log.error("HTTP网络错误" + e);
-				throw new IOException("HTTP网络错误" + e);
-			} catch (IOException e) {
-				log.error("IO网络错误" + e);
-				throw new IOException("IO网络错误" + e);
+				// 设置实体
+				httpPost.setEntity(new StringEntity(JSON.toJSONString(data)));
+				// 发送请求,返回响应对象
+				CloseableHttpResponse response = client.execute(httpPost);
+				// 获取响应状态
+				int status = response.getStatusLine().getStatusCode();
+				if (status == HttpStatus.SC_OK) {
+					// 获取响应结果
+					resultJson = EntityUtils.toString(response.getEntity(), encoding);
+				} else {
+					log.error("响应失败，状态码：" + status);
+				}
+
 			} catch (Exception e) {
-				log.error("系统错误" + e);
-				throw new Exception("系统错误" + e);
+				log.error("发送post请求失败", e);
 			} finally {
-				// 关闭连接
-				if (httppost != null) {
-					httppost.releaseConnection();
-				}
+				httpPost.releaseConnection();
 			}
+			return resultJson;
 		}
 
 		/**
-		 * 发送http get请求
-		 * 
-		 * @param getUrl
-		 * @return
+		 * @Title: sendPost @Description:
+		 *         TODO(发送post请求，请求数据默认使用json格式，默认使用UTF-8编码) @param url
+		 *         请求地址 @param data 请求实体 @author wangxy @return String @date
+		 *         2018年5月10日 下午4:37:28 @throws
 		 */
-		public static String get(String getUrl) {
-			StringBuffer sb = new StringBuffer();
-			InputStreamReader isr = null;
-			BufferedReader br = null;
+		public static String sendPost(String url, JSONObject data) {
+			// 设置默认请求头
+			Map<String, String> headers = new HashMap<>();
+			headers.put("content-type", "application/json");
+
+			return sendPost(url, headers, data, ENCODING);
+		}
+
+		/**
+		 * @Title: sendPost @Description:
+		 *         TODO(发送post请求，请求数据默认使用json格式，默认使用UTF-8编码) @param url
+		 *         请求地址 @param params 请求实体 @author wangxy @return String @date
+		 *         2018年5月10日 下午6:11:05 @throws
+		 */
+		public static String sendPost(String url, Map<String, Object> params) {
+			// 设置默认请求头
+			Map<String, String> headers = new HashMap<>();
+			headers.put("content-type", "application/json");
+			// 将map转成json
+			JSONObject data = JSONObject.parseObject(JSON.toJSONString(params));
+			return sendPost(url, headers, data, ENCODING);
+		}
+
+		/**
+		 * @Title: sendPost @Description: TODO(发送post请求，请求数据默认使用UTF-8编码) @param
+		 *         url 请求地址 @param headers 请求头 @param data 请求实体 @author
+		 *         wangxy @return String @date 2018年5月10日 下午4:39:03 @throws
+		 */
+		public static String sendPost(String url, Map<String, String> headers, JSONObject data) {
+			return sendPost(url, headers, data, ENCODING);
+		}
+
+		/**
+		 * @Title: sendPost @Description:(发送post请求，请求数据默认使用UTF-8编码) @param url
+		 *         请求地址 @param headers 请求头 @param params 请求实体 @author
+		 *         wangxy @return String @date 2018年5月10日 下午5:58:40 @throws
+		 */
+		public static String sendPost(String url, Map<String, String> headers, Map<String, String> params) {
+			// 将map转成json
+			JSONObject data = JSONObject.parseObject(JSON.toJSONString(params));
+			return sendPost(url, headers, data, ENCODING);
+		}
+
+		/**
+		 * @Title: sendGet @Description: TODO(发送get请求) @param url 请求地址 @param
+		 *         params 请求参数 @param encoding 编码 @author wangxy @return
+		 *         String @date 2018年5月14日 下午2:39:01 @throws
+		 */
+		public static String sendGet(String url, Map<String, String> headers, String encoding) {
+			log.info("进入get请求方法...");
+			log.info("请求入参：URL= " + url);
+			log.info("请求入参：headers=" + JSON.toJSONString(headers));
+			// 请求结果
+			String resultJson = null;
+			// 创建client
+			CloseableHttpClient client = HttpClients.createDefault();
+			// 创建HttpGet
+			HttpGet httpGet = new HttpGet();
 			try {
-				URL url = new URL(getUrl);
-				URLConnection urlConnection = url.openConnection();
-				urlConnection.setAllowUserInteraction(false);
-				isr = new InputStreamReader(url.openStream());
-				br = new BufferedReader(isr);
-				String line;
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
+				// 创建uri
+				URIBuilder builder = new URIBuilder(url);
+				// 封装参数
+				// if (params != null) {
+				// for (String key : params.keySet()) {
+				// builder.addParameter(key, params.get(key).toString());
+				// }
+				// }
+				if (headers != null) {
+					// Header[] allHeader = new BasicHeader[headers.size()];
+					// int i = 0;
+					for (String key : headers.keySet()) {
+						httpGet.addHeader(key, headers.get(key));
+						// for (Map.Entry<String, String> entry :
+						// headers.entrySet()) {
+						// allHeader[i] = new BasicHeader(key,headers.get(key));
+						// i++;
+					}
+					// httpGet.setHeaders(allHeader);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+				URI uri = builder.build();
+				log.info("请求地址：" + uri);
+				// 设置请求地址
+				httpGet.setURI(uri);
+				// 发送请求，返回响应对象
+				CloseableHttpResponse response = client.execute(httpGet);
+				// 获取响应状态
+				int status = response.getStatusLine().getStatusCode();
+				if (status == HttpStatus.SC_OK) {
+					// 获取响应数据
+					resultJson = EntityUtils.toString(response.getEntity(), encoding);
+				} else {
+					log.error("响应失败，状态码：" + status);
+				}
+			} catch (Exception e) {
+				log.error("发送get请求失败", e);
 			} finally {
-				if(br!=null)
-					try {
-						br.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				if(isr!=null)
-					try {
-						isr.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				httpGet.releaseConnection();
 			}
-			return sb.toString();
+			return resultJson;
+		}
+
+		/**
+		 * @Title: sendGet @Description: TODO(发送get请求) @param url 请求地址 @param
+		 *         params 请求参数 @author wangxy @return String @date 2018年5月14日
+		 *         下午2:32:39 @throws
+		 */
+		public static String sendGet(String url, Map<String, String> headers) {
+			return sendGet(url, headers, ENCODING);
+		}
+
+		/**
+		 * @Title: sendGet @Description: TODO(发送get请求) @param url 请求地址 @author
+		 *         wangxy @return String @date 2018年5月14日 下午2:33:45 @throws
+		 */
+		public static String sendGet(String url) {
+			return sendGet(url, null, ENCODING);
 		}
 	}
 }

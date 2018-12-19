@@ -1,10 +1,9 @@
 package cn.travel.world.request;
 
-public class ArticleDescReq {
+public class QueryListReq {
 	private String key;
 	private String type;
 	private String page;
-	private String limit;
 	public String getKey() {
 		return key;
 	}
@@ -23,11 +22,6 @@ public class ArticleDescReq {
 	public void setPage(String page) {
 		this.page = page;
 	}
-	public String getLimit() {
-		return limit;
-	}
-	public void setLimit(String limit) {
-		this.limit = limit;
-	}
+	
 	
 }

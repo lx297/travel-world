@@ -1,39 +1,25 @@
 package cn.travel.world;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import cn.travel.world.response.ArticleDescResp;
+import cn.travel.world.util.KK;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest {
 	public static void main(String[] args) throws Exception {
-
-//		String res= KK.http.get( "https://m.mafengwo.cn/group/s.php?key=天天&type=1");
-//		String res= KK.http.get( "https://m.mafengwo.cn/i/8796846.html");
-//		Document doc = Jsoup.parse(new URL("https://m.mafengwo.cn/i/8796846.html"), 5000);
-		Document doc = Jsoup.parse(new URL("https://m.mafengwo.cn/group/s.php?key=天天&type=1"), 5000);
-//		Document doc = Jsoup.parse(new File("Xml-Util.xml"),"UTF-8");
-		List<ArticleDescResp> respList=new ArrayList<>();
-		Elements select = doc.select("section.articles > article.article > a");
-		for (Element e : select) {
-			ArticleDescResp descResp=new ArticleDescResp();
-			descResp.setTitle(e.select("dl > dd > h2").text());
-			descResp.setPic(e.select("dl > dt > img[src]").attr("src"));
-			descResp.setReply(e.select("dl > dd > div.post-info >span.reply").text());
-			descResp.setView(e.select("dl > dd > div.post-info >span.view").text());
-			descResp.setAuthorPic(e.select("dl > dd > div.author >img[src]").attr("src"));
-			respList.add(descResp);
-		}
-	
-		
+		Map<String,String > input=new HashMap<>();
+		input.put("Referer", "https://m.douban.com");
+		String json= KK.http.sendGet("https://m.douban.com/rexxar/api/v2/movie/3878007/interests?count=10&order_by=hot&start=0&ck=&for_mobile=1",input);
+		System.out.println(json);
+//		String html= KK.http.sendGet("https://m.douban.com/search/?query=海王&type=movie",input);
+//		Document parse = Jsoup.parse(html);
+//		Elements elements = parse.select("ul.search_results_subjects > li > a");
+//		for (Element e : elements) {
+//			
+//		}
+//		System.out.println(parse);
 	}
 }
