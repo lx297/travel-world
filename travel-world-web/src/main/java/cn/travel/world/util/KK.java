@@ -242,6 +242,42 @@ public class KK {
 			}
 			return sb.toString();
 		}
+
+		public static String postPxoy(String uri, String pxoyIp, int pxoyPort,String json) throws IOException {
+			URL url = new URL(uri);
+			// /创建代理服务器
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(pxoyIp, pxoyPort)); // http
+																								// 代理
+			// Proxy proxy = new Proxy(Proxy.Type.SOCKS, addr); // Socket 代理
+			// Authenticator.setDefault(new MyAuthenticator("username",
+			// "password"));// 设置代理的用户和密码
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);// 设置代理访问
+			connection.setDoOutput(true);
+			// 设置是否从HttpURLConnection读入内容，默认为true
+			connection.setDoInput(true);
+			// 设置是否使用缓存，post请求不使用缓存
+			connection.setUseCaches(false);
+			// 设置请求方法 注意大小写!
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(5000);
+			connection.setReadTimeout(10000);
+			connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			// !!!重点部分，设置参数
+			
+			OutputStream os = connection.getOutputStream();
+			os.write(json.getBytes("UTF-8"));
+			os.flush();
+			os.close();
+
+			InputStreamReader in = new InputStreamReader(connection.getInputStream());
+			BufferedReader reader = new BufferedReader(in);
+			StringBuffer sb = new StringBuffer();
+			String s;
+			while ((s = reader.readLine()) != null) {
+				sb.append(s);
+			}
+			return sb.toString();
+		}
 	}
 
 	public static class file {
@@ -371,11 +407,11 @@ public class KK {
 			try {
 				reader = new BufferedReader(new FileReader(filePath));
 				String tempString = null;
-				int line = 1;
+//				int line = 1;
 				// 一次读入一行，直到读入null为文件结束
 				while ((tempString = reader.readLine()) != null) {
 					listContent.add(tempString);
-					line++;
+//					line++;
 				}
 				reader.close();
 			} catch (IOException e) {
