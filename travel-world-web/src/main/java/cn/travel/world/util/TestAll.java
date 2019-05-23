@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TestAll {
 	public static void main(String[] args) throws InterruptedException {
-		int[] arrId = { 77550408, 77168050, 76782728, 76529566, 76257771, 75970248, 75685955, 75416749,78055024};
+		int[] arrId = { 78055024,78169536,78479915,78781764,79089286,79556963,80071318,80177887,80487444,80811214};
 		List<String> readFileContent = KK.file.readFileContent("proxy2.txt");
 		for (int i = 0; i < 20; i++) {
 			new Thread( new Runnable() {
