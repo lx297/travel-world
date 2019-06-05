@@ -1,8 +1,11 @@
 package cn.travel.world.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +15,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
@@ -98,7 +102,35 @@ public class KK {
 			}
 			return resultJson;
 		}
+	    //链接url下载图片
+	    public static void download(String urlList,String imageName) {
+	        URL url = null;
+	        int imageNumber = 0;
 
+	        try {
+	            url = new URL(urlList);
+	            DataInputStream dataInputStream = new DataInputStream(url.openStream());
+
+
+	            FileOutputStream fileOutputStream = new FileOutputStream(new File(imageName));
+	            ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+	            byte[] buffer = new byte[1024];
+	            int length;
+
+	            while ((length = dataInputStream.read(buffer)) > 0) {
+	                output.write(buffer, 0, length);
+	            }
+	            byte[] context=output.toByteArray();
+	            fileOutputStream.write(output.toByteArray());
+	            dataInputStream.close();
+	            fileOutputStream.close();
+	        } catch (MalformedURLException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
 		/**
 		 * @Title: sendPost @Description:
 		 *         TODO(发送post请求，请求数据默认使用json格式，默认使用UTF-8编码) @param url
