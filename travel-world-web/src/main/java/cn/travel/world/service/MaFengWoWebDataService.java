@@ -20,7 +20,7 @@ import cn.travel.world.request.QueryDetailsReq;
 import cn.travel.world.request.QueryListReq;
 import cn.travel.world.response.DescListResp;
 import cn.travel.world.service.WebDataService;
-import cn.travel.world.statics.PageBean;
+import cn.travel.world.statics.StaticPropertys;
 import cn.travel.world.util.KK;
 
 @Service
@@ -32,7 +32,7 @@ public class MaFengWoWebDataService{
 	public List<Object> getDataList(QueryListReq  req) {
  		Document doc = null;
 		try {
-			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, req.getPage(), PageBean.PAGE_LIMIT, req.getKey())), 5000);
+			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, req.getPage(), StaticPropertys.PAGE_LIMIT, req.getKey())), 5000);
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

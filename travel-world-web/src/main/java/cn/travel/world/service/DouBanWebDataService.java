@@ -17,7 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.travel.world.request.QueryDetailsReq;
 import cn.travel.world.request.QueryListReq;
 import cn.travel.world.response.DescListResp;
-import cn.travel.world.statics.PageBean;
+import cn.travel.world.statics.StaticPropertys;
 import cn.travel.world.util.KK;
 
 @Service
@@ -47,7 +47,7 @@ public class DouBanWebDataService {
 		if(req.getPage()==0)req.setPage(1);
 		Map<String,String > input=new HashMap<>();
 		input.put("Referer", "https://m.douban.com");
-		String json= KK.http.sendGet(String.format(MOVIES_DETAILS_URL,req.getId(),PageBean.PAGE_LIMIT,PageBean.PAGE_LIMIT*(req.getPage()-1)),input);
+		String json= KK.http.sendGet(String.format(MOVIES_DETAILS_URL,req.getId(),StaticPropertys.PAGE_LIMIT,StaticPropertys.PAGE_LIMIT*(req.getPage()-1)),input);
 		JSONArray jsonObj=JSONObject.parseObject(json).getJSONArray("interests");
 		System.out.println(jsonObj);
 		return jsonObj;

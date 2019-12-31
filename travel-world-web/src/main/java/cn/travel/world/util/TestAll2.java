@@ -13,7 +13,7 @@ public class TestAll2 {
 		QueryListReq req = new QueryListReq();
 		int c=0;
 		for (int i = 1; i < 1000; i++) {
-			req.setPage(i + "");
+			req.setPage(i);
 			List<Object> dataList = kProxyWebDataServiceImpl.getDataList(req);
 			for (Object object : dataList) {
 				String[] arr = object.toString().split(" ");

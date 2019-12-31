@@ -1,0 +1,10 @@
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
+Cache-Control: max-age=0
+Connection: keep-alive
+Cookie: route=a1a1ed3a69b3c5b885b0d1d00d39ce4d; ecology_JSessionId=abc7jkm497Gh-58RGkw9w; PD-ECC=BAGs3DCBgAIBAQICAZoCAQACAQAEAARvBAGs3DBpAgEBAgReCcUiBB5kY29uZS5wb3J0YWwuZGlnaXRhbGNoaW5hLmNvbQAEDWRpZ2l0YWxjaGluYQAEDi9wa21zdm91Y2hmb3IAMB8CAQEwGjAYAgEBBAxwZC1lY2MtaHR0cAAwBQQDODAA!.digitalchina.com; JSESSIONID=abc7jkm497Gh-58RGkw9w; loginfileweaver=%2Flogin%2FLogin.jsp%3Flogintype%3D1; languageidweaver=7; PD-H-SESSION-ID=1_4_1_r3z7gaqj2yPTZc29gUBqjjEeXUjjvSJKtpBWdYY0KEzDCm75; loginidweaver=39485
+Host: dcone.portal.digitalchina.com
+Referer: http://dcone.portal.digitalchina.com/wui/main.jsp?templateId=1
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36

@@ -40,9 +40,12 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.travel.world.statics.StaticPropertys;
 
 public class KK {
 	private static Logger log = LoggerFactory.getLogger(KK.class);
@@ -58,6 +61,17 @@ public class KK {
 		 *         wangxy @return String @date 2018年5月10日 下午4:36:17 @throws
 		 */
 		public static String sendPost(String url, Map<String, String> headers, JSONObject data, String encoding) {
+			if(headers==null)headers=new HashMap<>();
+			List<String> readFileContent = KK.file.readFileContent(StaticPropertys.HTTP_HEADERS_DEFAULT_FILE_PATH);
+			if (readFileContent != null && !readFileContent.isEmpty())
+				for (String str : readFileContent) {
+					if (StringUtils.isEmpty(str) || !str.contains(":"))
+						continue;
+					String[] split = str.split(":");
+					if (!headers.containsKey(split[0].trim())) {
+						headers.put(split[0].trim(), split[1].trim());
+					}
+				}
 			log.info("进入post请求方法...");
 			log.info("请求入参：URL= " + url);
 			log.info("请求入参：headers=" + JSON.toJSONString(headers));
@@ -102,35 +116,36 @@ public class KK {
 			}
 			return resultJson;
 		}
-	    //链接url下载图片
-	    public static void download(String urlList,String imageName) {
-	        URL url = null;
-	        int imageNumber = 0;
 
-	        try {
-	            url = new URL(urlList);
-	            DataInputStream dataInputStream = new DataInputStream(url.openStream());
+		// 链接url下载图片
+		public static void download(String urlList, String imageName) {
+			URL url = null;
+//			int imageNumber = 0;
 
+			try {
+				url = new URL(urlList);
+				DataInputStream dataInputStream = new DataInputStream(url.openStream());
 
-	            FileOutputStream fileOutputStream = new FileOutputStream(new File(imageName));
-	            ByteArrayOutputStream output = new ByteArrayOutputStream();
+				FileOutputStream fileOutputStream = new FileOutputStream(new File(imageName));
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-	            byte[] buffer = new byte[1024];
-	            int length;
+				byte[] buffer = new byte[1024];
+				int length;
 
-	            while ((length = dataInputStream.read(buffer)) > 0) {
-	                output.write(buffer, 0, length);
-	            }
-	            byte[] context=output.toByteArray();
-	            fileOutputStream.write(output.toByteArray());
-	            dataInputStream.close();
-	            fileOutputStream.close();
-	        } catch (MalformedURLException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
+				while ((length = dataInputStream.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
+//				byte[] context = output.toByteArray();
+				fileOutputStream.write(output.toByteArray());
+				dataInputStream.close();
+				fileOutputStream.close();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		/**
 		 * @Title: sendPost @Description:
 		 *         TODO(发送post请求，请求数据默认使用json格式，默认使用UTF-8编码) @param url
@@ -186,6 +201,17 @@ public class KK {
 		 *         String @date 2018年5月14日 下午2:39:01 @throws
 		 */
 		public static String sendGet(String url, Map<String, String> headers, String encoding) {
+			if(headers==null)headers=new HashMap<>();
+			List<String> readFileContent = KK.file.readFileContent(StaticPropertys.HTTP_HEADERS_DEFAULT_FILE_PATH);
+			if (readFileContent != null && !readFileContent.isEmpty())
+				for (String str : readFileContent) {
+					if (StringUtils.isEmpty(str) || !str.contains(":"))
+						continue;
+					String[] split = str.split(":");
+					if (!headers.containsKey(split[0].trim())) {
+						headers.put(split[0].trim(), split[1].trim());
+					}
+				}
 			log.info("进入get请求方法...");
 			log.info("请求入参：URL= " + url);
 			log.info("请求入参：headers=" + JSON.toJSONString(headers));
@@ -275,7 +301,7 @@ public class KK {
 			return sb.toString();
 		}
 
-		public static String postPxoy(String uri, String pxoyIp, int pxoyPort,String json) throws IOException {
+		public static String postPxoy(String uri, String pxoyIp, int pxoyPort, String json) throws IOException {
 			URL url = new URL(uri);
 			// /创建代理服务器
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(pxoyIp, pxoyPort)); // http
@@ -295,7 +321,7 @@ public class KK {
 			connection.setReadTimeout(10000);
 			connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 			// !!!重点部分，设置参数
-			
+
 			OutputStream os = connection.getOutputStream();
 			os.write(json.getBytes("UTF-8"));
 			os.flush();
@@ -434,16 +460,19 @@ public class KK {
 		 * @return
 		 */
 		public static List<String> readFileContent(String filePath) {
+			if (!new File(filePath).exists()) {
+				return null;
+			}
 			BufferedReader reader = null;
 			List<String> listContent = new ArrayList<>();
 			try {
 				reader = new BufferedReader(new FileReader(filePath));
 				String tempString = null;
-//				int line = 1;
+				// int line = 1;
 				// 一次读入一行，直到读入null为文件结束
 				while ((tempString = reader.readLine()) != null) {
 					listContent.add(tempString);
-//					line++;
+					// line++;
 				}
 				reader.close();
 			} catch (IOException e) {
