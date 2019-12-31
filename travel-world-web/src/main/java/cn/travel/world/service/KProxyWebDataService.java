@@ -1,4 +1,4 @@
-package cn.travel.world.impl;
+package cn.travel.world.service;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import cn.travel.world.service.WebDataService;
 import cn.travel.world.util.KK;
 
 @Service
-public class KProxyWebDataServiceImpl implements WebDataService {
+public class KProxyWebDataService  {
 	public static final String[] K_PROXY = { 
 			"https://www.xicidaili.com/wt/%s",
 			"https://www.kuaidaili.com/free/inha/%s/",
@@ -26,7 +26,6 @@ public class KProxyWebDataServiceImpl implements WebDataService {
 			"http://www.89ip.cn/index_%s.html"
 	};
 
-	@Override
 	public List<Object> getDataList(QueryListReq req) {
 		List<Object> respList = new ArrayList<>();
 		for (int i = 0; i < K_PROXY.length; i++) {
@@ -48,14 +47,13 @@ public class KProxyWebDataServiceImpl implements WebDataService {
 		return respList;
 	}
 
-	@Override
 	public String getDataDetail(QueryDetailsReq req) {
 		return null;
 	}
 
 	public static void main(String[] args) throws InterruptedException {
 		int[] arrId = { 77550408, 77168050, 76782728, 76529566, 76257771, 75970248, 75685955, 75416749, 78055024 };
-		KProxyWebDataServiceImpl kProxyWebDataServiceImpl = new KProxyWebDataServiceImpl();
+		KProxyWebDataService kProxyWebDataServiceImpl = new KProxyWebDataService();
 		QueryListReq req = new QueryListReq();
 		int c = 0;
 		for (int i = 1; i < 1000; i++) {

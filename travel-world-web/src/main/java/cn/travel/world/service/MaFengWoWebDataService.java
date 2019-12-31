@@ -1,4 +1,4 @@
-package cn.travel.world.impl;
+package cn.travel.world.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,19 +20,19 @@ import cn.travel.world.request.QueryDetailsReq;
 import cn.travel.world.request.QueryListReq;
 import cn.travel.world.response.DescListResp;
 import cn.travel.world.service.WebDataService;
+import cn.travel.world.statics.PageBean;
 import cn.travel.world.util.KK;
 
 @Service
-public class MaFengWoWebDataServiceImpl implements WebDataService {
+public class MaFengWoWebDataService{
 	private static final String ART_LIST_URL = "https://m.mafengwo.cn/group/s.php?type=1&page=%s&limit=%s&key=%s";
 	private static final String ART_DETAILS_URL = "https://m.mafengwo.cn/i/%s.html";
 	private static final String ART_DETAILS_URL_NEXT = "https://m.mafengwo.cn/note/note/contentChunk?id=%s&iid=%s&back=0";
 
-	@Override
 	public List<Object> getDataList(QueryListReq  req) {
  		Document doc = null;
 		try {
-			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, req.getPage(), PAGE_LIMIT, req.getKey())), 5000);
+			doc = Jsoup.parse(new URL(String.format(ART_LIST_URL, req.getPage(), PageBean.PAGE_LIMIT, req.getKey())), 5000);
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -55,7 +55,6 @@ public class MaFengWoWebDataServiceImpl implements WebDataService {
 		return respList;
 	}
 
-	@Override
 	public String getDataDetail(QueryDetailsReq req) {
 		try {
 			Document doc = Jsoup.parse(new URL(String.format(ART_DETAILS_URL, req.getId())), 5000);

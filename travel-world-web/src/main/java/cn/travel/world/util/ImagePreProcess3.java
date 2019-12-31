@@ -1,7 +1,6 @@
 package cn.travel.world.util;
 
 import java.io.File;
-import java.net.URL;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;

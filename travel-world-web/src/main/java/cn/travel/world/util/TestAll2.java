@@ -3,13 +3,13 @@ package cn.travel.world.util;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.travel.world.impl.KProxyWebDataServiceImpl;
 import cn.travel.world.request.QueryListReq;
+import cn.travel.world.service.KProxyWebDataService;
 
 public class TestAll2 {
 	public static void main(String[] args) throws InterruptedException {
 		int[]  arrId={78055024,78169536,78479915,78781764,79089286,79556963,80071318,80177887,80487444,80811214};
-		KProxyWebDataServiceImpl kProxyWebDataServiceImpl = new KProxyWebDataServiceImpl();
+		KProxyWebDataService kProxyWebDataServiceImpl = new KProxyWebDataService();
 		QueryListReq req = new QueryListReq();
 		int c=0;
 		for (int i = 1; i < 1000; i++) {
